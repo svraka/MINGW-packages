@@ -1,0 +1,85 @@
+# Maintainer: András Svraka <svraka.andras@gmail.com>
+
+_basename=emacs
+_realname=${_basename}27
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=27.0.91
+pkgrel=3
+pkgdesc="The extensible, customizable, self-documenting, real-time display editor (mingw-w64, pertest version of Emacs 27)"
+url="https://www.gnu.org/software/${_basename}/"
+license=('GPL3')
+arch=('any')
+provides=("${MINGW_PACKAGE_PREFIX}-${_basename}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_basename}")
+depends=("${MINGW_PACKAGE_PREFIX}-ctags"
+         "${MINGW_PACKAGE_PREFIX}-zlib"
+         "${MINGW_PACKAGE_PREFIX}-xpm-nox"
+         "${MINGW_PACKAGE_PREFIX}-gnutls"
+         "${MINGW_PACKAGE_PREFIX}-libwinpthread"
+         "${MINGW_PACKAGE_PREFIX}-harfbuzz")
+optdepends=("${MINGW_PACKAGE_PREFIX}-giflib"
+            "${MINGW_PACKAGE_PREFIX}-jansson"
+            "${MINGW_PACKAGE_PREFIX}-libjpeg-turbo"
+            "${MINGW_PACKAGE_PREFIX}-libpng"
+            "${MINGW_PACKAGE_PREFIX}-librsvg"
+            "${MINGW_PACKAGE_PREFIX}-libtiff"
+            "${MINGW_PACKAGE_PREFIX}-imagemagick"
+            "${MINGW_PACKAGE_PREFIX}-libxml2")
+makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
+             "${MINGW_PACKAGE_PREFIX}-pkg-config"
+             "make"
+             "autoconf"
+             "texinfo"
+             "patch"
+             "${optdepends[@]}")
+# Don't zip info files because the built-in info reader uses gzip to
+# decompress them. gzip is not available as a mingw binary.
+options=('strip' '!zipman')
+source=("https://alpha.gnu.org/gnu/${_basename}/pretest/${_basename}-${pkgver}.tar.xz"{,.sig})
+sha256sums=('96813dd385dec81ceb1868645939d49b81ca2c1feb42a58b4d38125ebd1345aa'
+            'SKIP')
+
+prepare() {
+  cd "${_basename}-${pkgver}"
+  ./autogen.sh
+}
+
+build() {
+  [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
+  mkdir -p "${srcdir}/build-${MINGW_CHOST}"
+  cd "build-${MINGW_CHOST}"
+
+  LDFLAGS+=" -fstack-protector"
+
+  ../${_basename}-${pkgver}/configure \
+    --prefix="${MINGW_PREFIX}" \
+    --build="${MINGW_CHOST}" \
+    --with-modules \
+    --with-imagemagick \
+    --without-dbus \
+    --without-compress-install
+
+  # --without-compress-install is needed because we don't have gzip in
+  # the mingw binaries.
+
+  make
+}
+
+package() {
+  cd "build-${MINGW_CHOST}"
+  make DESTDIR="${pkgdir}" install
+  rm -f "${pkgdir}${MINGW_PREFIX}/bin/ctags.exe"
+  rm -f "${pkgdir}${MINGW_PREFIX}/share/man/man1/ctags.1.gz"
+
+  local dir="${pkgdir}${MINGW_PREFIX}/share/${_basename}"
+        dir="${dir}/$(ls -1 ${dir} | grep -E '([0-9]+\.[0-9]+)(\.[0-9]+)?')/src"
+
+  mkdir -p "${dir}"
+  cd "${srcdir}/${_basename}-${pkgver}/src"
+  cp *.c *.h *.m "${dir}"
+}
+
+# TODO:
+# Patch `shell-file-name' default in the C source code similarly to
+# `source-directory'.
