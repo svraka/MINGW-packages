@@ -7,7 +7,7 @@
 # Configure
 cd "$(dirname "$0")"
 source 'ci-library.sh'
-deploy_enabled && mkdir artifacts
+mkdir artifacts
 git_config user.email 'ci@msys2.org'
 git_config user.name  'MSYS2 Continuous Integration'
 git remote add upstream 'https://github.com/MSYS2/MINGW-packages'
@@ -30,8 +30,8 @@ for package in "${packages[@]}"; do
     execute 'Building binary' makepkg-mingw --noconfirm --noprogressbar --skippgpcheck --nocheck --syncdeps --rmdeps --cleanbuild
     execute 'Building source' makepkg --noconfirm --noprogressbar --skippgpcheck --allsource --config '/etc/makepkg_mingw64.conf'
     execute 'Installing' yes:pacman --noprogressbar --upgrade *"${PKGEXT}"
-    deploy_enabled && mv "${package}"/*"${PKGEXT}" artifacts
-    deploy_enabled && mv "${package}"/*"${SRCEXT}" artifacts
+    mv "${package}"/*"${PKGEXT}" artifacts
+    mv "${package}"/*"${SRCEXT}" artifacts
     unset package
 done
 

@@ -33,3 +33,9 @@ jobs:
 
       - name: CI-Build
         run: MINGW_INSTALLS=${{ matrix.msystem_lower }} ./ci-build.sh
+
+      - name: Upload Packages
+        uses: actions/upload-artifact@v2
+        with:
+          name: packages
+          path: artifacts
