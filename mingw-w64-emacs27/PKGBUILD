@@ -6,6 +6,7 @@ pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=27.1_rc1
 pkgver_proper="${pkgver/_/-}"
+pkgver_archive="27.0.91"
 pkgrel=1
 pkgdesc="The extensible, customizable, self-documenting, real-time display editor (mingw-w64, pertest version of Emacs 27)"
 url="https://www.gnu.org/software/${_basename}/"
@@ -42,7 +43,7 @@ sha256sums=('4fcc06da284a8a369c64b9c9d2d73c39dd289958a0a1b673b3cdba1e774a5b6f'
             'SKIP')
 
 prepare() {
-  cd "${_basename}-${pkgver}"
+  cd "${_basename}-${pkgver_archive}"
   ./autogen.sh
 }
 
@@ -53,7 +54,7 @@ build() {
 
   LDFLAGS+=" -fstack-protector"
 
-  ../${_basename}-${pkgver}/configure \
+  ../${_basename}-${pkgver_archive}/configure \
     --prefix="${MINGW_PREFIX}" \
     --build="${MINGW_CHOST}" \
     --with-modules \
@@ -77,7 +78,7 @@ package() {
         dir="${dir}/$(ls -1 ${dir} | grep -E '([0-9]+\.[0-9]+)(\.[0-9]+)?')/src"
 
   mkdir -p "${dir}"
-  cd "${srcdir}/${_basename}-${pkgver}/src"
+  cd "${srcdir}/${_basename}-${pkgver_archive}/src"
   cp *.c *.h *.m "${dir}"
 }
 
