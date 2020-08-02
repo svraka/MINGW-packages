@@ -4,8 +4,8 @@ _basename=emacs
 _realname=${_basename}27
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=27.0.91
-pkgrel=3
+pkgver=27.1-rc1
+pkgrel=1
 pkgdesc="The extensible, customizable, self-documenting, real-time display editor (mingw-w64, pertest version of Emacs 27)"
 url="https://www.gnu.org/software/${_basename}/"
 license=('GPL3')
@@ -37,7 +37,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
 # decompress them. gzip is not available as a mingw binary.
 options=('strip' '!zipman')
 source=("https://alpha.gnu.org/gnu/${_basename}/pretest/${_basename}-${pkgver}.tar.xz"{,.sig})
-sha256sums=('96813dd385dec81ceb1868645939d49b81ca2c1feb42a58b4d38125ebd1345aa'
+sha256sums=('4fcc06da284a8a369c64b9c9d2d73c39dd289958a0a1b673b3cdba1e774a5b6f'
             'SKIP')
 
 prepare() {
