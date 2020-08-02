@@ -36,12 +36,12 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-gcc"
 # Don't zip info files because the built-in info reader uses gzip to
 # decompress them. gzip is not available as a mingw binary.
 options=('strip' '!zipman')
-source=("https://alpha.gnu.org/gnu/${_basename}/pretest/${_basename}-${pkgver}.tar.xz"{,.sig})
+source=("https://alpha.gnu.org/gnu/${_basename}/pretest/${_basename}-${pkgver/_/-}.tar.xz"{,.sig})
 sha256sums=('4fcc06da284a8a369c64b9c9d2d73c39dd289958a0a1b673b3cdba1e774a5b6f'
             'SKIP')
 
 prepare() {
-  cd "${_basename}-${pkgver}"
+  cd "${_basename}-${pkgver/_/-}"
   ./autogen.sh
 }
 
@@ -52,7 +52,7 @@ build() {
 
   LDFLAGS+=" -fstack-protector"
 
-  ../${_basename}-${pkgver}/configure \
+  ../${_basename}-${pkgver/_/-}/configure \
     --prefix="${MINGW_PREFIX}" \
     --build="${MINGW_CHOST}" \
     --with-modules \
@@ -76,7 +76,7 @@ package() {
         dir="${dir}/$(ls -1 ${dir} | grep -E '([0-9]+\.[0-9]+)(\.[0-9]+)?')/src"
 
   mkdir -p "${dir}"
-  cd "${srcdir}/${_basename}-${pkgver}/src"
+  cd "${srcdir}/${_basename}-${pkgver/_/-}/src"
   cp *.c *.h *.m "${dir}"
 }
 
