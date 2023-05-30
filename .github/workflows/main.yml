@@ -27,6 +27,9 @@ jobs:
     env:
       MSYS: "winjitdebug"
     steps:
+      - name: Collect Workflow Telemetry
+        uses: runforesight/workflow-telemetry-action@v1
+
       - name: Get CPU Name
         run : |
           Get-CIMInstance -Class Win32_Processor | Select-Object -Property Name
