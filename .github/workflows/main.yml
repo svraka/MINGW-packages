@@ -88,6 +88,9 @@ jobs:
           If (Test-Path "C:\_") { rm -r -fo "C:\_" }
           Copy-Item -Path ".\temp" -Destination "C:\_" -Recurse
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: CI-Build
         shell: msys2 {0}
         id: build
