@@ -36,7 +36,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${optdepends[@]}")
 # Don't zip info files because the built-in info reader uses gzip to
 # decompress them. gzip is not available as a mingw binary.
-options=('!strip' 'debug' '!zipman')
+options=('!strip' '!zipman')
 source=("https://ftp.gnu.org/gnu/${_realname}/${_realname}-${pkgver}.tar.xz"{,.sig}
         "001-ucrt.patch"
         "002-clang-fixes.patch")
