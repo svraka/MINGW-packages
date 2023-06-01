@@ -1,0 +1,11 @@
+diff --git a/lisp/Makefile.in b/lisp/Makefile.in
+index 80955abfb5b..c7e9e878618 100644
+--- a/lisp/Makefile.in
++++ b/lisp/Makefile.in
+@@ -297,6 +297,7 @@ .PHONY:
+ $(THEFILE)n:
+ 	$(AM_V_ELN)$(emacs) $(BYTE_COMPILE_FLAGS) \
+ 		-l comp -f byte-compile-refresh-preloaded \
++		--eval '(setq w32-disable-abort-dialog t)' \
+ 		--eval '(batch-native-compile t)' $(THEFILE)
+ endif

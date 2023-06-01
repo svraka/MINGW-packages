@@ -39,12 +39,14 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
 options=('!strip' '!zipman')
 source=("https://ftp.gnu.org/gnu/${_realname}/${_realname}-${pkgver}.tar.xz"{,.sig}
         "001-ucrt.patch"
-        "002-clang-fixes.patch")
+        "002-clang-fixes.patch"
+        "003-w32-disable-abort-dialog.patch")
 # source=("https://alpha.gnu.org/gnu/${_realname}/pretest/${_realname}-${pkgver}.tar.xz"{,.sig})
 sha256sums=('ee21182233ef3232dc97b486af2d86e14042dbb65bbc535df562c3a858232488'
             'SKIP'
             'e1347064ec30094e21679764f784fa7557738946485359041473e6e9d7f3c3dc'
-            '6f3a3260d8fd6c1fbeafd0611f604c46799005dc776af076bff1fd4d8a3b6304')
+            '6f3a3260d8fd6c1fbeafd0611f604c46799005dc776af076bff1fd4d8a3b6304'
+            'd76eceeca35fbeeca95f4982d37b0c02f0f3b87b3dfafba2f95dcb8c909e5c80')
 validpgpkeys=('28D3BED851FDF3AB57FEF93C233587A47C207910'
 	      '17E90D521672C04631B1183EE78DAE0F3115E06B'
 	      'E6C9029C363AD41D787A8EBB91C1262F01EB8D39'
@@ -55,6 +57,7 @@ prepare() {
 
   patch -Np1 -i "${srcdir}/001-ucrt.patch"
   patch -Np1 -i "${srcdir}/002-clang-fixes.patch"
+  patch -Np1 -i "${srcdir}/003-w32-disable-abort-dialog.patch"
 
   ./autogen.sh
 }
