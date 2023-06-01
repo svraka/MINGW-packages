@@ -37,14 +37,21 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
 # Don't zip info files because the built-in info reader uses gzip to
 # decompress them. gzip is not available as a mingw binary.
 options=('!strip' '!zipman')
+gccver=12.2.0-9
 source=("https://ftp.gnu.org/gnu/${_realname}/${_realname}-${pkgver}.tar.xz"{,.sig}
         "001-ucrt.patch"
-        "002-clang-fixes.patch")
+        "002-clang-fixes.patch"
+        "https://repo.msys2.org/mingw${MINGW_PREFIX}/${MINGW_PACKAGE_PREFIX}-gcc-${gccver}-any.pkg.tar.zst"
+        "https://repo.msys2.org/mingw${MINGW_PREFIX}/${MINGW_PACKAGE_PREFIX}-gcc-libs-${gccver}-any.pkg.tar.zst"
+        "https://repo.msys2.org/mingw${MINGW_PREFIX}/${MINGW_PACKAGE_PREFIX}-libgccjit-${gccver}-any.pkg.tar.zst")
 # source=("https://alpha.gnu.org/gnu/${_realname}/pretest/${_realname}-${pkgver}.tar.xz"{,.sig})
 sha256sums=('ee21182233ef3232dc97b486af2d86e14042dbb65bbc535df562c3a858232488'
             'SKIP'
             'e1347064ec30094e21679764f784fa7557738946485359041473e6e9d7f3c3dc'
-            '6f3a3260d8fd6c1fbeafd0611f604c46799005dc776af076bff1fd4d8a3b6304')
+            '6f3a3260d8fd6c1fbeafd0611f604c46799005dc776af076bff1fd4d8a3b6304'
+            '4a73efe49f0db0f0f8c9fedd94d91267d0e321a57958bf289ab9b48a5725624a'
+            '8a752c497c7de90b426927ac13c556789c8332b737874198af0941f619dbe709'
+            '0344d968d87af5318e51dcaee147025e6e510d5192d1867ebac1e831e6e8c51d')
 validpgpkeys=('28D3BED851FDF3AB57FEF93C233587A47C207910'
 	      '17E90D521672C04631B1183EE78DAE0F3115E06B'
 	      'E6C9029C363AD41D787A8EBB91C1262F01EB8D39'
@@ -55,6 +62,11 @@ prepare() {
 
   patch -Np1 -i "${srcdir}/001-ucrt.patch"
   patch -Np1 -i "${srcdir}/002-clang-fixes.patch"
+  # Disabled dependency checking so we don't need to reinstal gcc-{ada,fortran,libgfortran,objc}
+  pacman -U --noconfirm --nodeps \
+         "${srcdir}/${MINGW_PACKAGE_PREFIX}-gcc-${gccver}-any.pkg.tar.zst" \
+         "${srcdir}/${MINGW_PACKAGE_PREFIX}-gcc-libs-${gccver}-any.pkg.tar.zst" \
+         "${srcdir}/${MINGW_PACKAGE_PREFIX}-libgccjit-${gccver}-any.pkg.tar.zst"
 
   ./autogen.sh
 }
