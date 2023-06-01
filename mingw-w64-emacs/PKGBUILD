@@ -75,6 +75,7 @@ build() {
   export LDFLAGS="${LDFLAGS} -lpthread"
   # -D_FORTIFY_SOURCE breaks build
   CFLAGS=${CFLAGS//"-Wp,-D_FORTIFY_SOURCE=2"}
+  CFLAGS=${CFLAGS//"-fstack-protector-strong"}
 
   ../${_realname}-${pkgver}/configure \
     --prefix="${MINGW_PREFIX}" \
