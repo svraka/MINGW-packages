@@ -88,7 +88,7 @@ build() {
   # --without-compress-install is needed because we don't have gzip in
   # the mingw binaries and it is also required by native compilation.
 
-  make
+  make V=1
 }
 
 package() {
