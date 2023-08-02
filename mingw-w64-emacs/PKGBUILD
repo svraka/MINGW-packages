@@ -5,8 +5,8 @@ _enable_jit=$([[ "${MINGW_PREFIX}" =~ /clang.* ]] || echo yes)
 _realname=emacs
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=28.2
-pkgrel=6
+pkgver=29.1
+pkgrel=1
 pkgdesc="The extensible, customizable, self-documenting, real-time display editor (mingw-w64)"
 url="https://www.gnu.org/software/${_realname}/"
 license=('spdx:GPL-3.0')
@@ -26,7 +26,10 @@ optdepends=("${MINGW_PACKAGE_PREFIX}-giflib"
             "${MINGW_PACKAGE_PREFIX}-libpng"
             "${MINGW_PACKAGE_PREFIX}-librsvg"
             "${MINGW_PACKAGE_PREFIX}-libtiff"
-            "${MINGW_PACKAGE_PREFIX}-libxml2")
+            "${MINGW_PACKAGE_PREFIX}-libwebp"
+            "${MINGW_PACKAGE_PREFIX}-libxml2"
+            "${MINGW_PACKAGE_PREFIX}-sqlite3"
+            "${MINGW_PACKAGE_PREFIX}-tree-sitter")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-autotools"
              "texinfo"
@@ -40,7 +43,7 @@ source=("https://ftp.gnu.org/gnu/${_realname}/${_realname}-${pkgver}.tar.xz"{,.s
         "001-ucrt.patch"
         "002-clang-fixes.patch")
 # source=("https://alpha.gnu.org/gnu/${_realname}/pretest/${_realname}-${pkgver}.tar.xz"{,.sig})
-sha256sums=('ee21182233ef3232dc97b486af2d86e14042dbb65bbc535df562c3a858232488'
+sha256sums=('d2f881a5cc231e2f5a03e86f4584b0438f83edd7598a09d24a21bd8d003e2e01'
             'SKIP'
             'e1347064ec30094e21679764f784fa7557738946485359041473e6e9d7f3c3dc'
             '6f3a3260d8fd6c1fbeafd0611f604c46799005dc776af076bff1fd4d8a3b6304')
@@ -64,7 +67,7 @@ build() {
 
   _extra_cfg=""
   if [[ "$_enable_jit" == "yes" ]] ; then
-      _extra_cfg="$_extra_cfg --with-native-compilation"
+      _extra_cfg="$_extra_cfg --with-native-compilation=aot"
   fi
 
   # Required for nanosleep with clang
@@ -81,6 +84,7 @@ build() {
     --with-modules \
     --without-dbus \
     --without-compress-install \
+    --with-tree-sitter \
     $_extra_cfg
 
   # --without-compress-install is needed because we don't have gzip in
