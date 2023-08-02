@@ -69,6 +69,8 @@ build() {
 
   # Required for nanosleep with clang
   export LDFLAGS="${LDFLAGS} -lpthread"
+  # -foptimize-sibling-calls breaks native compilation (GCC 13.1)
+  CFLAGS+=" -fno-optimize-sibling-calls"
 
   ../${_realname}-${pkgver}/configure \
     --prefix="${MINGW_PREFIX}" \
