@@ -69,8 +69,6 @@ build() {
 
   # Required for nanosleep with clang
   export LDFLAGS="${LDFLAGS} -lpthread"
-  # -D_FORTIFY_SOURCE breaks build
-  CFLAGS=${CFLAGS//"-Wp,-D_FORTIFY_SOURCE=2"}
 
   ../${_realname}-${pkgver}/configure \
     --prefix="${MINGW_PREFIX}" \
