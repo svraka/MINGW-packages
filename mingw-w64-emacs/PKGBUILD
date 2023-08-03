@@ -22,6 +22,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-universal-ctags"
          "${MINGW_PACKAGE_PREFIX}-gnutls"
          "${MINGW_PACKAGE_PREFIX}-libwinpthread")
 optdepends=("${MINGW_PACKAGE_PREFIX}-giflib"
+            "${MINGW_PACKAGE_PREFIX}-lcms2"
             "${MINGW_PACKAGE_PREFIX}-libjpeg-turbo"
             "${MINGW_PACKAGE_PREFIX}-libpng"
             "${MINGW_PACKAGE_PREFIX}-librsvg"
