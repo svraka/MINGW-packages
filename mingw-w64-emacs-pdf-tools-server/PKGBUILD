@@ -5,11 +5,12 @@ pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 # Issues may arise if not used with the same release of the pdf-tools emacs package
 pkgver=1.1.0
-pkgrel=1
+commit=30b50544e55b8dbf683c2d932d5c33ac73323a16
+pkgrel=2
 pkgdesc="Emacs support library for PDF files"
-source=("${_realname}-${pkgver}.tar.gz::https://github.com/vedang/pdf-tools/archive/refs/tags/v${pkgver}.tar.gz")
+source=("${_realname}-${pkgver}.tar.gz::https://github.com/vedang/pdf-tools/archive/${commit}.tar.gz")
 noextract=(${_realname}-${pkgver}.tar.gz)
-sha256sums=("bb5badef03e27411e62290d71c9e4657952230b6bd557c8523699d42c30a3866")
+sha256sums=('06100d03a2082978368eb3b6174cc5fa5a88352ec144bd94dbabfbcdb2c52c40')
 mingw_arch=('mingw64' 'ucrt64' 'clang64')
 msys2_references=(
   'aur: emacs-pdf-tools-git'
