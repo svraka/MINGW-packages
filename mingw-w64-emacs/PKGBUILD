@@ -1,13 +1,14 @@
 # Maintainer: Haroogan <Haroogan@gmail.com>
 # Maintainer: Oscar Fuentes <ofv@wanadoo.es>
 
+# TODO: native comp is default, turn it off for CLANG
 _enable_jit=$([[ "${MSYSTEM}" == CLANG* ]] || echo yes)
 _sanity_check=$([[ "${MSYSTEM}" != MINGW* ]] || echo yes)
 
 _realname=emacs
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=29.4
+pkgver=30.0.91
 pkgrel=1
 pkgdesc="The extensible, customizable, self-documenting, real-time display editor (mingw-w64)"
 arch=('any')
@@ -25,45 +26,42 @@ depends=("${MINGW_PACKAGE_PREFIX}-ctags"
          "${MINGW_PACKAGE_PREFIX}-xpm-nox"
          "${MINGW_PACKAGE_PREFIX}-freetype"
          "${MINGW_PACKAGE_PREFIX}-harfbuzz"
-         "${MINGW_PACKAGE_PREFIX}-jansson"
          "${MINGW_PACKAGE_PREFIX}-gnutls"
+         "${MINGW_PACKAGE_PREFIX}-sqlite3"
          "${MINGW_PACKAGE_PREFIX}-tree-sitter"
          "${MINGW_PACKAGE_PREFIX}-libwinpthread")
 optdepends=("${MINGW_PACKAGE_PREFIX}-giflib"
+            "${MINGW_PACKAGE_PREFIX}-lcms2"
             "${MINGW_PACKAGE_PREFIX}-libjpeg-turbo"
             "${MINGW_PACKAGE_PREFIX}-libpng"
             "${MINGW_PACKAGE_PREFIX}-librsvg"
             "${MINGW_PACKAGE_PREFIX}-libtiff"
-            "${MINGW_PACKAGE_PREFIX}-libxml2")
+            "${MINGW_PACKAGE_PREFIX}-libxml2"
+            "${MINGW_PACKAGE_PREFIX}-libwebp")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-autotools"
              "${optdepends[@]}")
 # Don't zip info files because the built-in info reader uses gzip to
 # decompress them. gzip is not available as a mingw binary.
 options=('!zipman')
-source=("https://ftp.gnu.org/gnu/${_realname}/${_realname}-${pkgver}.tar.xz"{,.sig}
-        "001-ucrt.patch"
+source=("https://alpha.gnu.org/gnu/${_realname}/pretest/${_realname}-${pkgver}.tar.xz"{,.sig}
+        # "001-ucrt.patch"
         "002-clang-fixes.patch"
         "003-aarch64-fixes.patch"
         "emacs-ARM64.manifest")
-# source=("https://alpha.gnu.org/gnu/${_realname}/pretest/${_realname}-${pkgver}.tar.xz"{,.sig})
-sha256sums=('ba897946f94c36600a7e7bb3501d27aa4112d791bfe1445c61ed28550daca235'
+sha256sums=('f107bb33ad634ffcffa031f923908a5a43c96b7235978dce55fea47958c50bfa'
             'SKIP'
-            'e1347064ec30094e21679764f784fa7557738946485359041473e6e9d7f3c3dc'
             'd8732584a8f3bfd0badbd16d15384b7098e25c5df48632beb02d35f6050c358b'
             'd128982d87af1e524ae809147613168153f0e5c1efb0ef633793df47b762c9e1'
             'bfe64602dbeeec85799c1156ca4f3837fdac42a076e83a4221768db3417220e1')
-validpgpkeys=('28D3BED851FDF3AB57FEF93C233587A47C207910'
-              '17E90D521672C04631B1183EE78DAE0F3115E06B'
-              'E6C9029C363AD41D787A8EBB91C1262F01EB8D39'
-              'CEA1DE21AB108493CC9C65742E82323B8F4353EE')
+validpgpkeys=('12BB9B400EE3F77282864D18272B5C54E015416A')
 
 prepare() {
   cp "${srcdir}/emacs-ARM64.manifest" "${_realname}-${pkgver}/nt"
 
   cd "${_realname}-${pkgver}"
 
-  patch -Np1 -i "${srcdir}/001-ucrt.patch"
+  # patch -Np1 -i "${srcdir}/001-ucrt.patch"
   patch -Np1 -i "${srcdir}/002-clang-fixes.patch"
   patch -Np1 -i "${srcdir}/003-aarch64-fixes.patch"
 
