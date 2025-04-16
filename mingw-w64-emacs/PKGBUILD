@@ -2,17 +2,18 @@
 # Maintainer: Oscar Fuentes <ofv@wanadoo.es>
 
 _enable_jit=$([[ "${MSYSTEM}" == CLANG* ]] || echo yes)
-_sanity_check=$([[ "${MSYSTEM}" != MINGW* ]] || echo yes)
 
 _realname=emacs
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=30.1
+pkgver=31.0
 pkgrel=1
 pkgdesc="The extensible, customizable, self-documenting, real-time display editor (mingw-w64)"
 arch=('any')
-mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
+# HACK: Patch doesn't apply to master, skip clangarm64 for now
+mingw_arch=('mingw64' 'ucrt64' 'clang64')
 url="https://www.gnu.org/software/${_realname}/"
+msys2_repository_url="https://github.com/emacs-mirror/${_realname}"
 msys2_references=(
   'archlinux: emacs'
   "cpe: cpe:/a:gnu:emacs"
@@ -37,19 +38,17 @@ optdepends=("${MINGW_PACKAGE_PREFIX}-giflib"
             "${MINGW_PACKAGE_PREFIX}-libxml2")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-autotools"
+             "git"
              "${optdepends[@]}")
 # Don't zip info files because the built-in info reader uses gzip to
 # decompress them. gzip is not available as a mingw binary.
 options=('!zipman')
-source=("https://ftp.gnu.org/gnu/${_realname}/${_realname}-${pkgver}.tar.xz"{,.sig}
-        "001-ucrt.patch"
-        "002-clang-fixes.patch"
-        "003-aarch64-fixes.patch"
+source=("git+${msys2_repository_url}.git#branch=master"
+        "001-clang-fixes.patch"
+        "002-aarch64-fixes.patch"
         "emacs-ARM64.manifest")
 # source=("https://alpha.gnu.org/gnu/${_realname}/pretest/${_realname}-${pkgver}.tar.xz"{,.sig})
-sha256sums=('6ccac1ae76e6af93c6de1df175e8eb406767c23da3dd2a16aa67e3124a6f138f'
-            'SKIP'
-            '8093c4c6dc8006c11fd33a78c5aefcb2b5b1f05e5afb9bd3da7d5b146dfc112c'
+sha256sums=('SKIP'
             'd8732584a8f3bfd0badbd16d15384b7098e25c5df48632beb02d35f6050c358b'
             'd128982d87af1e524ae809147613168153f0e5c1efb0ef633793df47b762c9e1'
             'bfe64602dbeeec85799c1156ca4f3837fdac42a076e83a4221768db3417220e1')
@@ -59,13 +58,14 @@ validpgpkeys=('28D3BED851FDF3AB57FEF93C233587A47C207910'
               'CEA1DE21AB108493CC9C65742E82323B8F4353EE')
 
 prepare() {
-  cp "${srcdir}/emacs-ARM64.manifest" "${_realname}-${pkgver}/nt"
+  # HACK: Patch doesn't apply to master, skip it for now
+  # cp "${srcdir}/emacs-ARM64.manifest" "${_realname}/nt"
 
-  cd "${_realname}-${pkgver}"
+  cd "${_realname}"
 
-  patch -Np1 -i "${srcdir}/001-ucrt.patch"
-  patch -Np1 -i "${srcdir}/002-clang-fixes.patch"
-  patch -Np1 -i "${srcdir}/003-aarch64-fixes.patch"
+  patch -Np1 -i "${srcdir}/001-clang-fixes.patch"
+  # HACK: Patch doesn't apply to master, skip it for now
+  # patch -Np1 -i "${srcdir}/002-aarch64-fixes.patch"
 
   ./autogen.sh
 }
@@ -83,7 +83,7 @@ build() {
   # -D_FORTIFY_SOURCE breaks build
   CFLAGS=${CFLAGS//"-Wp,-D_FORTIFY_SOURCE=2"}
 
-  ../${_realname}-${pkgver}/configure \
+  ../${_realname}/configure \
     --prefix="${MINGW_PREFIX}" \
     --host="${MINGW_CHOST}" \
     --build="${MINGW_CHOST}" \
@@ -96,12 +96,7 @@ build() {
   # --without-compress-install is needed because we don't have gzip in
   # the mingw binaries and it is also required by native compilation.
 
-  # 001-ucrt.patch breaks stdout, causing make sanity-check to fail
-  if [[ "$_sanity_check" == "yes" ]] ; then
-    make
-  else
-    make actual-all
-  fi
+  make
 }
 
 package() {
@@ -114,7 +109,7 @@ package() {
         dir="${dir}/$(ls -1 ${dir} | grep -E '([0-9]+\.[0-9]+)(\.[0-9]+)?')/src"
 
   mkdir -p "${dir}"
-  cd "${srcdir}/${_realname}-${pkgver}/src"
+  cd "${srcdir}/${_realname}/src"
   cp *.c *.h *.m "${dir}"
 }
 
