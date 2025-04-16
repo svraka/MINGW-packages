@@ -1,7 +1,7 @@
 # Maintainer: Haroogan <Haroogan@gmail.com>
 # Maintainer: Oscar Fuentes <ofv@wanadoo.es>
 
-_enable_jit="no"
+_enable_jit=$([[ "${MSYSTEM}" == CLANG* ]] || echo yes)
 _sanity_check=$([[ "${MSYSTEM}" != MINGW* ]] || echo yes)
 
 _realname=emacs
@@ -40,7 +40,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${optdepends[@]}")
 # Don't zip info files because the built-in info reader uses gzip to
 # decompress them. gzip is not available as a mingw binary.
-options=('!zipman' 'debug')
+options=('!zipman')
 source=("https://ftp.gnu.org/gnu/${_realname}/${_realname}-${pkgver}.tar.xz"{,.sig}
         "001-ucrt.patch"
         "002-clang-fixes.patch"
@@ -82,7 +82,6 @@ build() {
   export LDFLAGS="${LDFLAGS} -lpthread"
   # -D_FORTIFY_SOURCE breaks build
   CFLAGS=${CFLAGS//"-Wp,-D_FORTIFY_SOURCE=2"}
-  CFLAGS=${CFLAGS//"-O2"/"-O0"}
 
   ../${_realname}-${pkgver}/configure \
     --prefix="${MINGW_PREFIX}" \
