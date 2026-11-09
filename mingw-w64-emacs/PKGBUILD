@@ -6,8 +6,8 @@ _enable_jit=$([[ "${MSYSTEM}" == CLANG* ]] || echo yes)
 _realname=emacs
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=31.1
-pkgrel=2
+pkgver=31.1.90
+pkgrel=1
 pkgdesc="The extensible, customizable, self-documenting, real-time display editor (mingw-w64)"
 arch=('any')
 mingw_arch=('ucrt64' 'clang64' 'clangarm64')
@@ -46,13 +46,11 @@ source=(# "https://ftp.gnu.org/gnu/${_realname}/${_realname}-${pkgver}.tar.xz"{,
         "https://alpha.gnu.org/gnu/${_realname}/pretest/${_realname}-${pkgver}.tar.xz"{,.sig}
         "001-clang-fixes.patch"
         "002-aarch64-fixes.patch"
-        "003-libtree-sitter-0.27.patch"
         "emacs-ARM64.manifest")
-sha256sums=('1da5790d9580c81932b5bf700633114468da7b3412d69faa767daebf974f4586'
+sha256sums=('abac96a397de99c5f8419c02f9343a672d9b144ac90e9cfd0399472647d7b5fa'
             'SKIP'
             'd8732584a8f3bfd0badbd16d15384b7098e25c5df48632beb02d35f6050c358b'
             '744620cb6c43c713120d5f43015d980aaf60910d9eef30180dbc920292785776'
-            'e7936647b4de2e802cc972e06aa6a5a81d53545fe4cf58caf2573820ecfe7a99'
             'bfe64602dbeeec85799c1156ca4f3837fdac42a076e83a4221768db3417220e1')
 validpgpkeys=('8DC2487E51ABDD90B5C4753F0F56D0553B6D411B')
 
@@ -71,8 +69,7 @@ prepare() {
 
   apply_patch_with_msg \
     001-clang-fixes.patch \
-    002-aarch64-fixes.patch \
-    003-libtree-sitter-0.27.patch
+    002-aarch64-fixes.patch
 
   ./autogen.sh
 }
@@ -104,14 +101,6 @@ build() {
   # the mingw binaries and it is also required by native compilation.
 
   make
-
-  # Patching a preloaded lisp file leads to make skipping AOT native
-  # compilation. See
-  # https://github.com/msys2/MINGW-packages/pull/31340
-  if [[ "$_enable_jit" == "yes" ]]; then
-    rm -rf native-lisp
-    make
-  fi
 }
 
 package() {
