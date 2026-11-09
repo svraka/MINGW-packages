@@ -42,8 +42,8 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
 # Don't zip info files because the built-in info reader uses gzip to
 # decompress them. gzip is not available as a mingw binary.
 options=('!zipman')
-source=("https://ftp.gnu.org/gnu/${_realname}/${_realname}-${pkgver}.tar.xz"{,.sig}
-        # "https://alpha.gnu.org/gnu/${_realname}/pretest/${_realname}-${pkgver}.tar.xz"{,.sig}
+source=(# "https://ftp.gnu.org/gnu/${_realname}/${_realname}-${pkgver}.tar.xz"{,.sig}
+        "https://alpha.gnu.org/gnu/${_realname}/pretest/${_realname}-${pkgver}.tar.xz"{,.sig}
         "001-clang-fixes.patch"
         "002-aarch64-fixes.patch"
         "003-libtree-sitter-0.27.patch"
